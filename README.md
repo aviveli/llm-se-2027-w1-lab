@@ -258,6 +258,30 @@ shell on Windows is PowerShell 5.1, which does not support it.
 
 ## Commands
 
+### Triage one issue
+
+Set `LLM_MODEL` and its provider API key in `.env` (see `.env.example`).
+Save a single issue object, for example
+`{"repo":"hono","number":42,"title":"CLI crashes","body":"Crashes at startup."}`,
+as `issue.json`, then run:
+
+```powershell
+uv run python -m triage.cli issue.json
+Get-Content -Raw issue.json | uv run python -m triage.cli
+```
+
+The command emits one JSON record with source identity and an `assessment`
+containing `issue_type`, `summary`, `component`, `priority`, `rationale`, and
+`missing_information`. Unclear classifications use `unknown` (or `null` for
+component). Priority is an estimate, not verified severity. No GitHub labels,
+assignments, or queues are changed.
+
+Title is required; body may be absent or null. Additional metadata, including
+labels and gold annotations, is ignored. Arrays and pull requests are rejected.
+Errors are written to stderr with no output record: exit 2 for invalid input
+and exit 1 for model/configuration failures. Issue text is sent to the configured
+model provider; only submit content you are permitted to share.
+
 ```bash
 uv run pytest                                   # tests
 uv run pyright                                  # check types

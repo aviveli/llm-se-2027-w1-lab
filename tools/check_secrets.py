@@ -32,13 +32,23 @@ def staged_files() -> list[str]:
         ["git", "diff", "--cached", "--name-only", "--diff-filter=ACM"],
         capture_output=True,
         text=True,
-        check=False,
+        encoding="utf-8",
+        errors="surrogateescape",
+        check=True,
     )
     return [f for f in out.stdout.splitlines() if f.strip()]
 
 
 def staged_content(path: str) -> str:
-    out = subprocess.run(["git", "show", f":{path}"], capture_output=True, text=True, check=False)
+    # Preserve non-UTF-8 bytes so binary files can still be scanned for ASCII keys.
+    out = subprocess.run(
+        ["git", "show", f":{path}"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="surrogateescape",
+        check=True,
+    )
     return out.stdout
 
 

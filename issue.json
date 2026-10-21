@@ -1,0 +1,5 @@
+{
+  "title": "CLI crashes on startup",
+  "body": "Running the command exits with an error.",
+  "number": 7
+}
